@@ -28,8 +28,11 @@ class ProjectManager:
             json.dump(self.projects, f, ensure_ascii=False, indent=4)
 
     def add_project(self, name: str, path: str, description: str, category: str = "", tags: List[str] = None,
-                    github_url: str = "", thumbnail_path: str = "", estimated_hours: int = 0) -> Dict:
+                    github_url: str = "", thumbnail: str = "", thumbnail_path: Optional[str] = None,
+                    estimated_hours: int = 0) -> Dict:
         path = str(Path(path).resolve())
+        # Keep backward compatibility if callers still pass thumbnail_path.
+        thumbnail_value = thumbnail_path if thumbnail_path is not None else thumbnail
         project = {
             "id": len(self.projects) + 1,
             "name": name,
@@ -38,7 +41,7 @@ class ProjectManager:
             "category": category,
             "tags": tags or [],
             "github_url": github_url,
-            "thumbnail": thumbnail_path,
+            "thumbnail": thumbnail_value,
             "created": datetime.now().isoformat(),
             "last_run": None,
             "estimated_hours": estimated_hours

@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "name": "Unlimited Knowledge",
+        "path": "E:\\Kerolos_Web_School",
+        "description": "A full stack website made with django for LMS.",
+        "category": "Python",
+        "tags": [],
+        "github_url": "https://github.com/Kerolosnady1/Kerolos_Web_School.git",
+        "thumbnail": "thumbnails\\logo.png",
+        "created": "2026-04-17T16:31:47.015210",
+        "last_run": null,
+        "estimated_hours": 800
+    }
+]

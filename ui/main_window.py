@@ -1,5 +1,6 @@
 # ui/main_window.py
 
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from pathlib import Path
@@ -7,6 +8,10 @@ import webbrowser
 import json
 import tempfile
 import zipfile
+
+# Support direct execution: `python ui/main_window.py`
+if __package__ is None or __package__ == "":
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from core.project_manager import ProjectManager
 from ui.dialogs import AddProjectDialog
@@ -367,3 +372,17 @@ class ProjectHubApp:
     # ----------------------------------------------------------------------
     def show_about(self):
         messagebox.showinfo("About", "ProjectHub v1.0\nA comprehensive project manager\nDeveloped as a graduation project")
+
+
+def main():
+    Path("database").mkdir(exist_ok=True)
+    Path("thumbnails").mkdir(exist_ok=True)
+    Path("backups").mkdir(exist_ok=True)
+
+    root = tk.Tk()
+    app = ProjectHubApp(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

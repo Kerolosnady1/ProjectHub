@@ -75,9 +75,15 @@ class AddProjectDialog:
         filetypes = [("Image files", "*.png *.jpg *.jpeg *.gif *.bmp")]
         filename = filedialog.askopenfilename(title="Select thumbnail", filetypes=filetypes)
         if filename:
-            dest = Path("thumbnails") / Path(filename).name
-            shutil.copy2(filename, dest)
-            self.thumbnail_path.set(str(dest))
+            thumbnails_dir = Path("thumbnails")
+            thumbnails_dir.mkdir(parents=True, exist_ok=True)
+            dest = thumbnails_dir / Path(filename).name
+            try:
+                if Path(filename).resolve() != dest.resolve():
+                    shutil.copy2(filename, dest)
+                self.thumbnail_path.set(str(dest))
+            except Exception as exc:
+                messagebox.showerror("Error", f"Could not set thumbnail:\n{exc}")
 
     def load_project_data(self):
         self.name_entry.insert(0, self.project['name'])
@@ -94,6 +100,11 @@ class AddProjectDialog:
         if not name or not path:
             messagebox.showerror("Error", "Please enter project name and path")
             return
+
+        if not Path(path).exists():
+            messagebox.showerror("Error", "The selected project path does not exist")
+            return
+
         data = {
             "name": name,
             "path": path,
@@ -103,9 +114,12 @@ class AddProjectDialog:
             "thumbnail": self.thumbnail_path.get(),
             "estimated_hours": int(self.hours_entry.get()) if self.hours_entry.get().isdigit() else 0
         }
-        if self.project:
-            self.pm.update_project(self.project['id'], **data)
-        else:
-            self.pm.add_project(**data)
-        self.callback()
-        self.win.destroy()
+        try:
+            if self.project:
+                self.pm.update_project(self.project['id'], **data)
+            else:
+                self.pm.add_project(**data)
+            self.callback()
+            self.win.destroy()
+        except Exception as exc:
+            messagebox.showerror("Error", f"Could not save project:\n{exc}")
